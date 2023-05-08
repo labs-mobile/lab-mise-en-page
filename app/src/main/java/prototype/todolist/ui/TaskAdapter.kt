@@ -1,6 +1,7 @@
 package prototype.todolist.ui
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
@@ -19,15 +20,10 @@ import prototype.todolist.data.TaskEntry
 import prototype.todolist.data.TaskRepository
 
 
-class TaskAdapter(private var listener: OnItemClickListener) : RecyclerView.Adapter<TaskAdapter.TaskViewHolder>() {
+class TaskAdapter() : RecyclerView.Adapter<TaskAdapter.TaskViewHolder>() {
 
-    // Todo : voir comment utiliser des événement en Kotlin
-    interface OnItemClickListener {
-        fun onItemClick(task: TaskEntry)
-    }
 
     private val taskRepository = TaskRepository()
-
     class TaskViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
         val taskTitle: TextView = view.findViewById<Button>(R.id.taskTitle)
         val taskPriority: TextView = view.findViewById<Button>(R.id.taskPriority)
@@ -54,7 +50,15 @@ class TaskAdapter(private var listener: OnItemClickListener) : RecyclerView.Adap
         taskViewHolder.taskTimestamp.text = task.timestamp.toString()
 
         taskViewHolder.cardView.setOnClickListener {
-            listener.onItemClick(task)
+
+            task.title = task.title + "+"
+            // Todo : supprimer ces deux lignes et voir est ce que RecyclerView continue d'afficher les updates ?
+            val repository = TaskRepository()
+            repository.save(task)
+            this.notifyDataSetChanged()
+
+            // Todo : Afficher un message aprés Update
+            // Toast.makeText(context,"Update $task", Toast.LENGTH_LONG).show()
         }
     }
 
